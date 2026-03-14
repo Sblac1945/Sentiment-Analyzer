@@ -1,0 +1,80 @@
+Personal Financial Dashboard App· typescript
+                  </LineChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="budgets" className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {budgetProgress.map((item) => {
+                const overBudget = item.spent > item.limit;
+                return (
+                  <Card key={item.category} className="rounded-2xl shadow-sm">
+                    <CardContent className="p-5 space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h3 className="font-medium text-slate-900">{item.category}</h3>
+                          <p className="text-sm text-slate-500">
+                            {formatCurrency(item.spent)} of {formatCurrency(item.limit)}
+                          </p>
+                        </div>
+                        <Badge variant={overBudget ? "destructive" : "secondary"}>
+                          {overBudget ? "Over budget" : `${Math.round(item.percent)}% used`}
+                        </Badge>
+                      </div>
+                      <Progress value={item.percent} />
+                      <p className="text-sm text-slate-500">
+                        {overBudget
+                          ? `${formatCurrency(Math.abs(item.remaining))} over limit`
+                          : `${formatCurrency(item.remaining)} remaining`}
+                      </p>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="transactions">
+            <Card className="rounded-2xl shadow-sm">
+              <CardHeader>
+                <CardTitle>Recent Transactions</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {recentTransactions.map((transaction) => (
+                    <div key={transaction.id} className="flex items-center justify-between rounded-2xl border border-slate-200 p-4">
+                      <div className="flex items-center gap-4">
+                        <div className="p-3 rounded-2xl bg-slate-100">
+                          <CreditCard className="h-4 w-4 text-slate-700" />
+                        </div>
+                        <div>
+                          <p className="font-medium text-slate-900">{transaction.description}</p>
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className="text-sm text-slate-500">{transaction.date}</span>
+                            <Badge variant="outline">{transaction.category}</Badge>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-4">
+                        <p className={`font-semibold ${transaction.type === "income" ? "text-emerald-600" : "text-slate-900"}`}>
+                          {transaction.type === "income" ? "+" : "-"}
+                          {formatCurrency(transaction.amount)}
+                        </p>
+                        <Button variant="ghost" size="icon" onClick={() => deleteTransaction(transaction.id)}>
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </div>
+    </div>
+  );
+}
